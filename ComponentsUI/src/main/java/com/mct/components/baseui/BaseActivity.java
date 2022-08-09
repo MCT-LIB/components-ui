@@ -178,7 +178,10 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseFrag
     public void popFragmentByAmount(int amount) {
         tryAutoHideSoftInput();
         int size = fragmentIds.size();
-        if (size > size - amount) {
+        if (size - amount < 0) {
+            fragmentIds.clear();
+            clearBackStack();
+        } else if (size > size - amount) {
             fragmentIds.subList(size - amount + 1, size).clear();
             getSupportFragmentManager().popBackStack((fragmentIds.remove(size - amount)), FragmentManager.POP_BACK_STACK_INCLUSIVE);
         }
