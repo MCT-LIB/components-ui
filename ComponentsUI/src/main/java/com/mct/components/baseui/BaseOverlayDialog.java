@@ -18,7 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.StyleRes;
 import androidx.appcompat.app.AlertDialog;
 
-import com.mct.components.utils.SizeUtils;
+import com.mct.components.utils.ScreenUtils;
 
 public abstract class BaseOverlayDialog extends BaseOverlayLifecycle {
 
@@ -167,6 +167,9 @@ public abstract class BaseOverlayDialog extends BaseOverlayLifecycle {
         Log.e(TAG, (visible ? "show overlay " : "hide overlay ") + hashCode());
     }
 
+    protected void onInitWindow(@NonNull Window window) {
+    }
+
     /**
      * Handle the dialog dismissing.
      */
@@ -217,8 +220,8 @@ public abstract class BaseOverlayDialog extends BaseOverlayLifecycle {
         } else {
             GradientDrawable drawable = new GradientDrawable();
             drawable.setColor(getBackgroundColor());
-            drawable.setCornerRadius(SizeUtils.dp2px(getCornerRadius()));
-            window.setBackgroundDrawable(new InsetDrawable(drawable, SizeUtils.dp2px(16)));
+            drawable.setCornerRadius(ScreenUtils.dp2px(getCornerRadius()));
+            window.setBackgroundDrawable(new InsetDrawable(drawable, ScreenUtils.dp2px(16)));
         }
         // soft input
         window.setSoftInputMode(getSoftInputMode());
@@ -228,6 +231,7 @@ public abstract class BaseOverlayDialog extends BaseOverlayLifecycle {
             view.performClick();
             return false;
         });
+        onInitWindow(window);
     }
 
     /**

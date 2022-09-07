@@ -1,8 +1,13 @@
 package com.mct.components.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.graphics.Point;
+import android.graphics.Rect;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;
 import android.view.View;
@@ -11,32 +16,10 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 
-public class SizeUtils {
+public class ScreenUtils {
 
-    private SizeUtils() {
+    private ScreenUtils() {
         throw new UnsupportedOperationException("u can't instantiate me...");
-    }
-
-    /**
-     * Value of dp to value of px.
-     *
-     * @param dpValue The value of dp.
-     * @return value of px
-     */
-    public static int dp2px(final float dpValue) {
-        final float scale = Resources.getSystem().getDisplayMetrics().density;
-        return (int) (dpValue * scale + 0.5f);
-    }
-
-    /**
-     * Value of px to value of dp.
-     *
-     * @param pxValue The value of px.
-     * @return value of dp
-     */
-    public static int px2dp(final float pxValue) {
-        final float scale = Resources.getSystem().getDisplayMetrics().density;
-        return (int) (pxValue / scale + 0.5f);
     }
 
     /**
@@ -173,6 +156,86 @@ public class SizeUtils {
         }
         view.measure(widthSpec, heightSpec);
         return new int[]{view.getMeasuredWidth(), view.getMeasuredHeight()};
+    }
+
+    /**
+     * Determine whether it is a tablet
+     */
+    public static boolean isPad(@NonNull Context context) {
+        DisplayMetrics dm = context.getResources().getDisplayMetrics();
+        int width = dm.widthPixels;
+        int height = dm.heightPixels;
+        double x = Math.pow(width, 2);
+        double y = Math.pow(height, 2);
+        double diagonal = Math.sqrt(x + y);
+
+        int dens = dm.densityDpi;
+        double screenInches = diagonal / (double) dens;
+        Log.e("ScreenUtils", "The screenInches " + screenInches);
+        // Pad larger than 6 size
+        return screenInches >= 6.0;
+    }
+
+    /**
+     * Get the current screenshot, including the status bar
+     */
+    public static Bitmap snapShotWithStatusBar(Activity activity) {
+        if (activity == null) {
+            return null;
+        }
+        View view = activity.getWindow().getDecorView();
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bmp = view.getDrawingCache();
+        int width = getScreenWidth(activity);
+        int height = getScreenHeight(activity);
+        Bitmap bp = Bitmap.createBitmap(bmp, 0, 0, width, height);
+        view.destroyDrawingCache();
+        return bp;
+
+    }
+
+    /**
+     * Get current screenshot without status bar
+     */
+    public static Bitmap snapShotWithoutStatusBar(Activity activity) {
+        if (activity == null) {
+            return null;
+        }
+        View view = activity.getWindow().getDecorView();
+        view.setDrawingCacheEnabled(true);
+        view.buildDrawingCache();
+        Bitmap bmp = view.getDrawingCache();
+        Rect frame = new Rect();
+        activity.getWindow().getDecorView().getWindowVisibleDisplayFrame(frame);
+        int statusBarHeight = frame.top;
+
+        int width = getScreenWidth(activity);
+        int height = getScreenHeight(activity);
+        Bitmap bp = Bitmap.createBitmap(bmp, 0, statusBarHeight, width, height - statusBarHeight);
+        view.destroyDrawingCache();
+        return bp;
+
+    }
+
+    public static int dp2px(float dpValue) {
+        final float scale = Resources.getSystem().getDisplayMetrics().density;
+        return (int) (dpValue * scale + 0.5f);
+    }
+
+    public static int px2dp(float pxValue) {
+        final float scale = Resources.getSystem().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
+    }
+
+    public static int sp2px(float spValue) {
+        final float scale = Resources.getSystem().getDisplayMetrics().density;
+        return (int) (spValue * scale + 0.5f);
+    }
+
+    public static int px2sp(float pxValue) {
+        final float scale = Resources.getSystem().getDisplayMetrics().density;
+        return (int) (pxValue / scale + 0.5f);
     }
 
 }
