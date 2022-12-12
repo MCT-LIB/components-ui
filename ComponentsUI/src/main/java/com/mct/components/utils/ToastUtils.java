@@ -1,4 +1,4 @@
-package com.mct.components.toast;
+package com.mct.components.utils;
 
 import android.content.Context;
 import android.graphics.Color;

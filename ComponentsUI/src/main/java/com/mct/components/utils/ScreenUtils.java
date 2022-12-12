@@ -229,12 +229,12 @@ public class ScreenUtils {
     }
 
     public static int sp2px(float spValue) {
-        final float scale = Resources.getSystem().getDisplayMetrics().density;
+        final float scale = Resources.getSystem().getDisplayMetrics().scaledDensity;
         return (int) (spValue * scale + 0.5f);
     }
 
     public static int px2sp(float pxValue) {
-        final float scale = Resources.getSystem().getDisplayMetrics().density;
+        final float scale = Resources.getSystem().getDisplayMetrics().scaledDensity;
         return (int) (pxValue / scale + 0.5f);
     }
 
